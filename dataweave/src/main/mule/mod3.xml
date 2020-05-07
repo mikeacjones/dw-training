@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <flow name="mod3-data-matcher" doc:id="9d09313a-0f82-444a-8851-35589594670c" >
+        <ee:transform doc:name="Transform Message" doc:id="153eb3b1-803c-4613-b71e-8be0245e681f" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+
+fun dataMatcher(n: Null) = "Null found"
+fun dataMatcher(a: Array) = "Array found"
+fun dataMatcher(o: Object) = "Object found"
+fun dataMatcher(n: Number) = "Number found"
+fun dataMatcher(s: String) = "String found"
+
+---
+/*10 match {
+	case is Number -> "Number"
+	case null -> "Null"
+	case 10 -> "Ten"
+	case [] -> "Empty array"
+	else -> $
+}*/
+
+
+[] match {
+	case is Null -> "Null"
+	case a if (a is Array) -> "Array"
+	case o if (o is Object) -> "Object"
+	case s if (s is String) -> "String"
+	case n if (n is Number) -> "Number"
+	else -> $
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="mod3-errors" doc:id="31b19199-c00d-4172-bf0a-d5740bddff5c" >
+        <ee:transform doc:name="Transform Message" doc:id="ddc0dba2-0bd2-4490-922b-cfd89649a3ca" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+
+var guard = (fn) -> dw::Runtime::try(fn) match {
+	case tr if (tr.success) -> tr.result
+	else -> $.error.message
+}
+
+var dates = [
+	"2020/01/01",
+	"01012019",
+	"2010/01/01"
+]
+
+---
+//dw::Runtime::try (() -> 10 / 0) match {
+//	case tr if (tr.success) -> tr.result
+//	else -> $.error.message
+//}
+
+//guard(() -> 10 / 2)
+
+do {
+	var result = dates map (
+		guard(() -> $ as Date {format: "yyyy/MM/dd"})
+	)
+	---
+	{
+		success: result filter $ is Date,
+		failure: result filter not $ is Date
+	}
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <flow name="mod1-review++" doc:id="ac4b733d-08c5-4f1a-a4bf-6ac94613b823" >
+        <ee:transform doc:name="Transform Message" doc:id="4bdb5489-510d-4244-8f27-a9b7d62ee685" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+---
+//payload.airline
+//"as": 
+//	a: 1,
+//	a: 2,
+//	a: 3
+//}.*a
+
+//"The flight is operated by " ++ payload.airline
+
+//"The flight is operated by $(payload.airline)"
+
+//[3, 1, 6, 4, 7][-1 to 0]
+
+//payload.airline[-1 to 0]
+
+//20 to 10
+
+//if (true) 1 else 0
+
+//"Data" default "Something else"
+
+//{
+//	a: 1,
+//	(b: 2) if (true),
+//	c: 3
+//}
+
+//sizeOf({})
+
+//typeOf(0 to 10)
+
+//[3,1,6,4,7] contains 1
+
+//payload.airline contains "u"
+
+//{} is Object
+
+//map([3,1,6,4,7], (e,i) -> e+1)  //Prefix
+
+//[3,1,6,4,7] map (e,i) -> e+1 //Infix
+
+[3, 1, 6, 4, 7] map $+1 map $-1]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="mod1-xml2json" doc:id="b32e5b01-ee2c-467a-afb0-c36f481aa3d6" >
+        <ee:transform doc:name="Transform Message" doc:id="0a748713-f240-47f1-adc9-04534fc2ef5e" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns2 http://soap.training.mulesoft.com/
+---
+//payload..*return
+//payload.findFlightResponse.*return
+payload.ns2#findFlightResponse.*return]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="mod1-json2xml" doc:id="84605228-f7e4-4f91-9a83-62317776b176" >
+        <ee:transform doc:name="Transform Message" doc:id="5857eaa4-5203-45d0-a133-3ad82f2ea428" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns2 http://soap.training.mulesoft.com/
+---
+
+ns2#flights: {( payload map { ns2#flight @(carrier: $.airlineName): $ } )}
+
+//flights: {( payload map flight: $ )}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>

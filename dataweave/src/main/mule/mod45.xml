@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <flow name="mod45-++--" doc:id="56ce547b-81f1-4e19-9654-8266592c7bae" >
+        <ee:transform doc:name="Transform Message" doc:id="4ea09d61-1383-489a-b09f-b6eb3a637c3b" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+
+var fs2rm = ["airline", "price", "planeType"]
+---
+//payload -- fs2rm
+
+[1,4,2,6,1,4,5,1] << 1000]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="mod45-zip-unzip-flatten" doc:id="ad65ed0d-90b6-4a3b-825d-7af73a055658" >
+        <ee:transform doc:name="Transform Message" doc:id="a49a97ba-cf4b-4d45-add6-580c1b6328cc" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+var a = [1,2,3,4]
+var b = ["a","b","c"]
+---
+//flatten(unzip(a zip b))
+flatten([0,1,[2,[3,[4,[5]]]]])]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>

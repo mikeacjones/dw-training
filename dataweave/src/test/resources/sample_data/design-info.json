@@ -1,0 +1,16 @@
+{
+  "sampleData": {
+    "4bdb5489-510d-4244-8f27-a9b7d62ee685": {
+      "payload": "sample_data/json.json"
+    },
+    "0a748713-f240-47f1-adc9-04534fc2ef5e": {
+      "payload": "sample_data/findflightresponse.xml"
+    },
+    "10c2ea9c-8759-40cc-837a-75bdbd1f9e48": {
+      "payload": "sample_data/findFlightResponse_1.xml"
+    },
+    "4ea09d61-1383-489a-b09f-b6eb3a637c3b": {
+      "payload": "sample_data/json_1.json"
+    }
+  }
+}

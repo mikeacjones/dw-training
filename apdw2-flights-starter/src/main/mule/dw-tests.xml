@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+	<flow name="matchOperatorTest" doc:id="bd9e2b8e-5637-40a9-869d-91d6eb33acba">
+		<ee:transform doc:name="Transform Message" doc:id="7b9b9a41-7682-42c7-b5c6-a2a291a395ec">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+
+var americanFlights =
+[
+  {
+    "ID": 5,
+    "code": "rree1093",
+    "price": 142,
+    "departureDate": "2018-02-11T00:00:00",
+    "origin": "MUA",
+    "destination": "SFO",
+    "emptySeats": 1,
+    "plane": {
+      "type": "Boeing 737",
+      "totalSeats": 150
+    }
+  },
+  {
+    "ID": 7,
+    "code": "eefd1994",
+    "price": 676,
+    "departureDate": "2018-01-01T00:00:00",
+    "origin": "MUA",
+    "destination": "SFO",
+    "emptySeats": 0,
+    "plane": {
+      "type": "Boeing 777",
+      "totalSeats": 300
+    }
+  },
+  {
+    "ID": 8,
+    "code": "ffee2000",
+    "price": 300,
+    "departureDate": "2018-02-20T00:00:00",
+    "origin": "MUA",
+    "destination": "SFO",
+    "emptySeats": 30,
+    "plane": {
+      "type": "Boeing 737",
+      "totalSeats": 150
+    }
+  },
+  {
+    "ID": 9,
+    "code": "eefd3000",
+    "price": 900,
+    "departureDate": "2018-02-01T00:00:00",
+    "origin": "MUA",
+    "destination": "SFO",
+    "emptySeats": 0,
+    "plane": {
+      "type": "Boeing 737",
+      "totalSeats": 150
+    }
+  }
+  ]
+  
+
+  
+---
+americanFlights
+
+
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
