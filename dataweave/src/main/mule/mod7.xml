@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <flow name="mod7-recsum" doc:id="57ee8be6-fa86-4df1-bac5-97f33a09c73f" >
+        <ee:transform doc:name="Transform Message" doc:id="1d87c9bb-da81-4eb0-86a7-35201fd1e4cf" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+var recsum = (n: Number) -> if (n <= 0) 0 else n + recsum (n-1)
+//var recsumTR = (n: Number, rt: Number = 0) -> if (n <= 0) rt else recsum(n-1, rt + n)
+fun tailrecsum(n:Number, r: Number = 0) = if (n <= 0) r else tailrecsum(n-1, r+n)
+---
+tailrecsum(3)]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="mod7-rflatten" doc:id="1541f1b8-d44b-459b-82cb-fcb39028f8a3" >
+        <ee:transform doc:name="Transform Message" doc:id="3db60d54-e7e8-4839-b9b5-01265ca73c73" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+
+var rflatten = (a: Array) -> flatten(a map (
+	if ($ is Array) rflatten($) else $
+))
+
+var rflatten2 = (a: Array, r: Array = []) -> if (a is Array) rflatten2(a, r + a) else a
+
+---
+rflatten2([0,1,[2,[3,[4,[5, 6]]]]])]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>

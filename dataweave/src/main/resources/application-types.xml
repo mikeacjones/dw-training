@@ -83,4 +83,40 @@ type flights_json = Array<{|  airlineName: String,   code: String,   departureDa
       </types:input-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#6847d1b1-35a8-49d8-be7a-fc267b4e7737">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="flight_json"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#b6b59dce-ee6b-40e4-9010-8703221cade0">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="flights_json"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#8cb20653-0e4c-40c3-8265-ae93142d9ba3">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="flights_json"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#ffc95710-0088-4145-beae-e20774f71c7a">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="flight_json"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
 </types:mule>

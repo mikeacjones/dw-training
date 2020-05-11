@@ -31,4 +31,60 @@ flatten([0,1,[2,[3,[4,[5]]]]])]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
+    <flow name="mod45-objects" doc:id="3ca1ffb2-0b4f-49f5-bb71-3216b7162a4b" >
+        <ee:transform doc:name="Transform Message" doc:id="6847d1b1-35a8-49d8-be7a-fc267b4e7737" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+import dw::core::Objects
+---
+//{
+//	keys: Objects::keySet(payload) map typeOf($),
+//	names: Objects::nameSet(payload) map typeOf($),
+//	values: Objects::valueSet(payload)
+//}
+
+//payload Objects::mergeWith {
+//	airline: "Unite"
+//}
+
+//only available in latest mule runtime
+{
+	keys: keysOf(payload),
+	values: valuesOf(payload),
+	names: namesOf(payload)
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="mod45-arrays" doc:id="0fa4dc46-6eb6-4844-9587-22d77a0bc931" >
+        <ee:transform doc:name="Transform Message" doc:id="b6b59dce-ee6b-40e4-9010-8703221cade0" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+import dw::core::Arrays
+
+//var compoundJoin = (l: Array,r: Array,lc: Array,rc: Array) ->
+//	Arrays::join(
+//		l, 
+//		r, 
+//		(li) -> (
+//			keysOf(li) reduce (li[$] ++ "|" ++ $$)
+//		), 
+//		(ri) -> (
+//			keysOf(ri) reduce (ri[$] ++ "|" ++ $$)
+//		)
+//	)
+var keys = ["airlineName", "code"]
+---
+{
+	areAllDeltaFlights: payload Arrays::every ($.airlineName == "Delta"),
+	numberOfEmptySeats: payload Arrays::sumBy ($.emptySeats as Number),
+	flightsToAtlanta: payload Arrays::some ($.destination == "ATL"),
+	flightsWithNoAvailability: payload Arrays::countBy ($.emptySeats ~= 0),
+	keys: keysOf(payload[0])
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
 </mule>

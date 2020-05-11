@@ -11,6 +11,18 @@
     },
     "4ea09d61-1383-489a-b09f-b6eb3a637c3b": {
       "payload": "sample_data/json_1.json"
+    },
+    "6847d1b1-35a8-49d8-be7a-fc267b4e7737": {
+      "payload": "sample_data/json_2.json"
+    },
+    "b6b59dce-ee6b-40e4-9010-8703221cade0": {
+      "payload": "sample_data/list_json.json"
+    },
+    "8cb20653-0e4c-40c3-8265-ae93142d9ba3": {
+      "payload": "sample_data/list_json_1.json"
+    },
+    "ffc95710-0088-4145-beae-e20774f71c7a": {
+      "payload": "sample_data/json_3.json"
     }
   }
 }

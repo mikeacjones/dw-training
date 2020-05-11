@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <flow name="mod6-flights-airports" doc:id="358dff03-2848-4711-aac0-535255d5c0f2" >
+        <ee:transform doc:name="Transform Message" doc:id="8cb20653-0e4c-40c3-8265-ae93142d9ba3" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+
+import dw::core::Arrays
+
+var fs2rn = {
+	airlineName: "carrier",
+	departureDate: "date",
+	destination: "dest",
+	planeType: "plane"
+}
+
+var airports = readUrl(
+	"classpath://airportInfoTiny.csv", 
+	"application/csv"
+) distinctBy $.IATA groupBy $.IATA
+
+var filterAirportsByIATA = (d) -> airports[d]
+var genericFilterNaive = (a,f,v) -> a filter $[f] == v
+var genericFilter = (a,fn) -> a filter fn($)
+var genericFilterC = (a) -> (fn) -> a filter fn($)
+var flightsFilter = genericFilterC(payload)
+var airportsFilter = genericFilterC(airports)
+
+var reorder = (o, ris) -> do {
+	var fs = o pluck $$
+	---
+	ris reduce (i, acc={}) -> acc ++ (fs[i]): o[i]
+}
+
+fun traverse(a: Array) = a map traverse($)
+fun traverse(o: Object) = o mapObject { (traverse($$)): traverse($) }
+fun traverse(k: Key) = upper(trim(k))
+fun traverse(s: String) = dw::Runtime::try(() -> s as Number)
+							dw::Runtime::orElseTry(() -> s as Date {format: "yyyy/MM/dd"})
+							dw::Runtime::orElse () -> lower(s)
+---
+
+/*
+ * M number of airports
+ * N number of flights
+ * 
+ * (2*M) + (8*N) + (N*M)
+ * 
+ * (3*M) + (8*N) + N
+ * 
+ */
+
+traverse(
+	payload map {
+		($ mapObject (v,k,i) -> {
+			(fs2rn[k] default k): v
+		}),
+		airport: airports[$.destination]
+	}
+	map (
+		$ reorder (8 to 0)
+	)
+)]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="mod6-read-file" doc:id="36bc493a-ee32-4927-9337-7e011bca7f10" >
+        <ee:transform doc:name="Transform Message" doc:id="0d863ccd-fba5-4cca-a17f-f69f10acb28e" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+---
+readUrl("classpath://airportInfoTiny.csv", "application/csv")
+distinctBy $.IATA
+//map { ($.IATA): { ($)} }
+groupBy $.IATA]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="mod6-reorder" doc:id="eb36d0d1-5526-4ad3-82fe-bff4665affee" >
+        <ee:transform doc:name="Transform Message" doc:id="ffc95710-0088-4145-beae-e20774f71c7a" >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+
+var reorder = (o, ris) -> do {
+	var fs = o pluck $$
+	---
+	ris reduce (i, acc={}) -> acc ++ (fs[i]): o[i]
+//	{(ris map {
+//		(fs[$]): o[$]
+//	})}
+}
+
+
+---
+
+payload reorder [8, 0, 7, 1, 5, 6, 2, 3, 4]]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>
